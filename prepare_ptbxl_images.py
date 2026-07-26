@@ -115,9 +115,26 @@ def main():
                 print("  -> inverted StandardScaler back to raw mV for the waveform image")
 
         split_out = os.path.join(args.out_dir, split)
-        method_kwargs = {"lead_names": PTBXL_LEAD_NAMES}
-        if args.method in ("waveform_grid", "spectrogram", "scalogram"):
-            method_kwargs["fs"] = PTBXLClassificationDataset.sampling_rate
+        method_kwargs = {
+            "lead_names": PTBXL_LEAD_NAMES,
+        }
+        
+        if args.method == "waveform_grid":
+            method_kwargs.update(
+                {
+                    "fs": PTBXLClassificationDataset.sampling_rate,
+                    "layout": "grid",
+                    "style": "clinical",
+                    "vert_grid_major": 0.5,
+                    "width_in": 12.0,
+                    "row_height": 2.0,
+                    "dpi": 160,
+                }
+            )
+        elif args.method in ("spectrogram", "scalogram"):
+            method_kwargs["fs"] = (
+                PTBXLClassificationDataset.sampling_rate
+            )
 
         precompute_dataset_images(
             signals, labels, split_out, method=args.method,
