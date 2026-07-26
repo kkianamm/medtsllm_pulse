@@ -7,11 +7,13 @@ from .bidmc import bidmc_datasets
 from .ludb import ludb_datasets
 from .dreams import dreams_datasets
 from .ptbxl import ptbxl_datasets
+from .ptbxl_qwen import ptbxl_qwen_datasets
+from .ptbxl_pulse import ptbxl_pulse_datasets
 
 from .util import multi_2_uni_dataset
 from .util import PretrainingDataset
-from .ptbxl_qwen import ptbxl_qwen_datasets
-from .ptbxl_pulse import ptbxl_pulse_datasets
+
+
 dataset_lookup = {
     "ETTh1": ett_datasets,
     "ETTh2": ett_datasets,
@@ -26,10 +28,9 @@ dataset_lookup = {
     "dreams": dreams_datasets,
     "PTB-XL": ptbxl_datasets,
     "PTB-XL-Qwen": ptbxl_qwen_datasets,
-    "PTB-XL": ptbxl_datasets,
-    "PTB-XL-Qwen": ptbxl_qwen_datasets,
     "PTB-XL-PULSE": ptbxl_pulse_datasets,
 }
+
 
 def get_dataset(config, split):
     dataset_cls = dataset_lookup[config.data.dataset][config.task]
@@ -37,8 +38,10 @@ def get_dataset(config, split):
     if config.data.mode == "univariate":
         dataset_cls = multi_2_uni_dataset(dataset_cls)
 
-    if not config.task in dataset_cls.supported_tasks:
-        raise ValueError(f"Task {config.task} not supported by dataset {config.data.dataset}")
+    if config.task not in dataset_cls.supported_tasks:
+        raise ValueError(
+            f"Task {config.task} not supported by dataset "
+            f"{config.data.dataset}"
+        )
 
-    dataset = dataset_cls(config, split)
-    return dataset
+    return dataset_cls(config, split)
