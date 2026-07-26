@@ -1,0 +1,86 @@
+DEBUG = false
+
+task = "classification"
+model = "medtsllm_pulse"
+
+# Use the full 10-second records100 waveform (100 Hz x 10 s), rather than the
+# baseline's 512-sample center crop.
+history_len = 1000
+pred_len = 1000
+
+[data]
+dataset = "PTB-XL-PULSE"
+mode = "multivariate"
+cols = "all"
+normalize = true
+step = 1000
+
+[training]
+epochs = 30
+batch_size = 16
+optimizer = "adam"
+learning_rate = 5e-5
+dropout = 0.15
+loss = "ce"
+# Select checkpoints by macro F1, not majority-class-friendly accuracy.
+eval_metric = "f1"
+eval_metric_direction = "max"
+
+[datasets.PTB-XL-PULSE]
+version = "v1"
+pulse_descriptions_dir = "data/ptbxl_pulse"
+pulse_feature_file = "pulse_features.pt"
+use_pulse_features = true
+require_pulse_features = true
+merge_mode = "append"
+# The generation prompt already omits diagnosis; keep this as defense in depth.
+drop_sections = ["Impression"]
+max_chars = 600
+# Force the signal path to remain useful instead of memorizing generated text.
+desc_dropout = 0.35
+dropout_seed = 0
+
+[models.medtsllm]
+d_model = 32
+d_ff = 128
+n_heads = 8
+num_tokens = 1024
+covariate_mode = "concat"
+embedding_downsample_mode = "linear"
+
+[models.medtsllm.patching]
+patch_len = 50
+stride = 25
+
+[models.medtsllm.prompting]
+input_stats_dim = 0
+input_stats_select = "all"
+dataset = true
+task = true
+clip = true
+input_stats = false
+examples = false
+
+[models.medtsllm.pulse_fusion]
+feature_dim = 4096
+hidden_dim = 512
+dropout = 0.20
+modality_dropout = 0.25
+align_lambda = 0.05
+initial_gate = 0.10
+max_gate = 0.50
+required = true
+
+[models.medtsllm.llm]
+enabled = true
+llm = "google/flan-t5-xl"
+load_in_4bit = false
+load_in_8bit = false
+llm_layers = -1
+
+[setup]
+seed = 0
+device = "auto"
+dtype = "mixed"
+num_workers = "auto"
+logger = "print"
