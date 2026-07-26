@@ -12,7 +12,7 @@ from .ptbxl_pulse import ptbxl_pulse_datasets
 
 from .util import multi_2_uni_dataset
 from .util import PretrainingDataset
-
+from .ptbxl_pulse import ptbxl_pulse_datasets
 
 dataset_lookup = {
     "ETTh1": ett_datasets,
