@@ -95,7 +95,24 @@ def _clean_report(text: str) -> str:
         body = re.sub(r"\s+", " ", " ".join(sections[label])).strip()
         if body:
             out.append(f"{label}: {body}")
-    return "\n".join(out)
+
+    cleaned = "\n".join(out).strip()
+    banned_diagnostic_terms = (
+        "diagnosis:",
+        "impression:",
+        "myocardial infarction",
+        "infarction",
+        "hypertrophy",
+        "conduction disturbance",
+        "normal ecg",
+        "abnormal ecg",
+        "ptb-xl",
+        "superclass",
+    )
+    if any(term in cleaned.lower() for term in banned_diagnostic_terms):
+        return ""
+
+    return cleaned
 
 
 class PulseGenerator:
@@ -293,7 +310,7 @@ def main() -> None:
             description=cleaned,
             backend="pulse",
             model=args.model_id,
-            prompt_version="findings_v1_no_diagnosis",
+            prompt_version="findings_v2_strict_no_diagnosis",
         )
         rows.append(row)
         if args.save_every > 0 and len(rows) % args.save_every == 0:
