@@ -1,4 +1,5 @@
 from .medtsllm import MedTsLLM
+from .medtsllm_pulse import MedTsLLMPulse
 from .gpt4ts import GPT4TS
 
 from .dlinear import DLinear
@@ -6,9 +7,6 @@ from .FEDformer import FEDformer
 from .PatchTST import PatchTST
 from .TimesNet import TimesNet
 
-from .medtsllm import MedTsLLM
-from .medtsllm_pulse import MedTsLLMPulse
-from .gpt4ts import GPT4TS
 
 model_lookup = {
     "timellm": MedTsLLM,
