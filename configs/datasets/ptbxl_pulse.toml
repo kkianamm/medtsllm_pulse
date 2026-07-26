@@ -3,7 +3,7 @@ DEBUG = false
 task = "classification"
 model = "medtsllm_pulse"
 
-# Use the full 10-second records100 waveform (100 Hz x 10 s), rather than the
+# Use the full 10-second waveform (100 Hz x 10 s), rather than the
 # baseline's 512-sample center crop.
 history_len = 1000
 pred_len = 1000
@@ -18,13 +18,14 @@ step = 1000
 [training]
 epochs = 30
 batch_size = 16
-optimizer = "adam"
+optimizer = "adamw"
 learning_rate = 5e-5
 dropout = 0.15
 loss = "ce"
 # Select checkpoints by macro F1, not majority-class-friendly accuracy.
 eval_metric = "f1"
 eval_metric_direction = "max"
+save_best = true
 
 [datasets.PTB-XL-PULSE]
 version = "v1"
@@ -66,7 +67,9 @@ feature_dim = 4096
 hidden_dim = 512
 dropout = 0.20
 modality_dropout = 0.25
-align_lambda = 0.05
+signal_loss_weight = 0.30
+pulse_loss_weight = 0.20
+align_lambda = 0.01
 initial_gate = 0.10
 max_gate = 0.50
 required = true
