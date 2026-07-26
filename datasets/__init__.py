@@ -11,7 +11,7 @@ from .ptbxl import ptbxl_datasets
 from .util import multi_2_uni_dataset
 from .util import PretrainingDataset
 from .ptbxl_qwen import ptbxl_qwen_datasets
-
+from .ptbxl_pulse import ptbxl_pulse_datasets
 dataset_lookup = {
     "ETTh1": ett_datasets,
     "ETTh2": ett_datasets,
@@ -26,6 +26,9 @@ dataset_lookup = {
     "dreams": dreams_datasets,
     "PTB-XL": ptbxl_datasets,
     "PTB-XL-Qwen": ptbxl_qwen_datasets,
+    "PTB-XL": ptbxl_datasets,
+    "PTB-XL-Qwen": ptbxl_qwen_datasets,
+    "PTB-XL-PULSE": ptbxl_pulse_datasets,
 }
 
 def get_dataset(config, split):
